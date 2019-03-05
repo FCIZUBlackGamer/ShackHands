@@ -11,7 +11,7 @@ public interface ApiConfig {
     Call<ResponseModel> loadMenu();
 
     @GET(API.PASSDATE)
-    Call<String> getPass();
+    Call<ResponsePass> getPass();
 
 }
 

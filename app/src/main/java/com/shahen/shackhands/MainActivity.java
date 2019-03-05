@@ -24,6 +24,7 @@ import com.shahen.shackhands.APIS.API;
 import com.shahen.shackhands.APIS.WebServiceConnection.ApiConfig;
 import com.shahen.shackhands.APIS.WebServiceConnection.AppConfig;
 import com.shahen.shackhands.APIS.WebServiceConnection.ResponseModel;
+import com.shahen.shackhands.APIS.WebServiceConnection.ResponsePass;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -90,14 +91,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        String name = item.toString();
         if (serverResponse != null) {
-            if (id == serverResponse.getMenu().get(serverResponse.getMenu().size()).getId()) {
+            if (name.equals(serverResponse.getMenu().get(69).getName())) {
                 setWebView("http://shakehands.devmahmoudadel.com/Users/DoctorsSearch/70");
             }
 
             for (int i = 0; i < serverResponse.getMenu().size() - 1; i++) {
-                if (id == serverResponse.getMenu().get(i).getId()) {
+                if (name.equals(serverResponse.getMenu().get(i).getName())) {
                     // Handle the camera action
                     setWebView(API.CAT + serverResponse.getMenu().get(i).getId());
                 }
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         mWebview.loadUrl(link);
-        setContentView(mWebview);
+//        setContentView(mWebview);
     }
 
     private void loadMenu() {
@@ -165,23 +166,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void pass() {
-        // Map is used to multipart the file using okhttp3.RequestBody
-
         AppConfig appConfig = new AppConfig(API.BASE_PASS);
         ApiConfig reg = appConfig.getRetrofit().create(ApiConfig.class);
-        Call<String> call = reg.getPass();
-        call.enqueue(new Callback<String>() {
+        Call<ResponsePass> call = reg.getPass();
+        call.enqueue(new Callback<ResponsePass>() {
             @SuppressLint("SetJavaScriptEnabled")
             @Override
-            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-                String s = response.body();
-                if (serverResponse != null) {
+            public void onResponse(Call<ResponsePass> call, retrofit2.Response<ResponsePass> response) {
+                String s = response.body().getDate();
+                if (s != null) {
                     valid_date = s;
                     Log.e("ServerDate", valid_date);
                     try {
                         if (valid_date != null) {
                             Date c = Calendar.getInstance().getTime();
-                            SimpleDateFormat df = new SimpleDateFormat("dd/MMM/yyyy");
+                            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                             String currentDate = df.format(c);
                             Log.e("currentDate", currentDate);
                             Date strDate = df.parse(valid_date);
@@ -210,7 +209,7 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
                 } else {
                     //textView.setText(serverResponse.toString());
@@ -219,7 +218,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<ResponsePass> call, Throwable t) {
                 //textView.setText(t.getMessage());
                 Log.e("Err", t.getMessage());
 
